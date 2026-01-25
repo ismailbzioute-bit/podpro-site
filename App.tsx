@@ -1,400 +1,590 @@
 
 import React, { useState, useEffect } from 'react';
-import { MOCKUPS, PLATFORMS, TRENDS, SERVICES } from './constants';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Gallery from './components/Gallery';
+import Trends from './components/Trends';
+import Platforms from './components/Platforms';
+import Services from './components/Services';
+import CTA from './components/CTA';
+import Footer from './components/Footer';
 import Modal from './components/Modal';
-import PlatformCard from './components/PlatformCard';
+import { MockupItem } from './types';
 
 const App: React.FC = () => {
-  const [selectedMockup, setSelectedMockup] = useState<MockupItem | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const openModal = (image: string) => {
+    setSelectedImage(image);
+    document.body.style.overflow = 'hidden';
+  };
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-    }
+  const closeModal = () => {
+    setSelectedImage(null);
+    document.body.style.overflow = 'auto';
   };
 
   return (
-<div className="min-h-screen flex flex-col">
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-6'}`}>
-        <div className="container mx-auto px-4 md:px-8 flex justify-between items-center">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
-              <i className="fas fa-layer-group text-white text-xl"></i>
-            </div>
-            <span className={`text-2xl font-black tracking-tight ${scrolled ? 'text-slate-900' : 'text-slate-900'}`}>POD<span className="text-indigo-600">MASTER</span></span>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => scrollToSection('mockups')} className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">Mockups</button>
-            <button onClick={() => scrollToSection('trends')} className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">Trends</button>
-            <button onClick={() => scrollToSection('platforms')} className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">Platforms</button>
-            <button onClick={() => scrollToSection('services')} className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">Services</button>
-            <button onClick={() => scrollToSection('cta')} className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-indigo-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-              Get Started
-            </button>
-          </div>
-
-          <button className="md:hidden text-slate-800 text-2xl">
-            <i className="fas fa-bars"></i>
-          </button>
-        </div>
-      </nav>
-
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-gradient-to-br from-indigo-50 to-white overflow-hidden">
-          <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1 text-center md:text-left">
-              <span className="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold tracking-wider uppercase mb-6 animate-bounce">
-                The Future of eCommerce
-              </span>
-              <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-tight mb-8">
-                Your Print On Demand <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Empire</span> Starts Here
-              </h1>
-              <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-xl mx-auto md:mx-0">
-                Turn your creative designs into high-quality physical products. No inventory, no risk—just pure profit through global fulfillment.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <button 
-                  onClick={() => scrollToSection('mockups')}
-                  className="px-10 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 shadow-xl transition-all transform hover:-translate-y-1"
-                >
-                  Explore Mockups
-                </button>
-                <button 
-                  onClick={() => scrollToSection('platforms')}
-                  className="px-10 py-4 bg-white text-indigo-600 border-2 border-indigo-600 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all transform hover:-translate-y-1"
-                >
-                  View Platforms
-                </button>
-              </div>
-              <div className="mt-12 flex items-center justify-center md:justify-start gap-6 text-slate-400">
-                <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <img key={i} src={`https://picsum.photos/seed/user${i}/40/40`} className="w-10 h-10 rounded-full border-2 border-white" alt="user" />
-                  ))}
-                </div>
-                <p className="text-sm font-medium"><span className="text-slate-900 font-bold">10k+</span> creators already onboard</p>
-              </div>
-            </div>
-            <div className="flex-1 relative">
-              <div className="relative z-10 animate-in slide-in-from-right duration-1000">
-                <img 
-                  src="https://images.unsplash.com/photo-1523381235312-6f28f3200c67?auto=format&fit=crop&q=80&w=1000" 
-                  alt="POD Products" 
-                  className="rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500"
-                />
-                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl animate-pulse">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                      <i className="fas fa-chart-line text-xl"></i>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400 font-bold">DAILY SALES</p>
-                      <p className="text-xl font-black text-slate-800">$2,450.00</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-indigo-200 opacity-20 blur-3xl rounded-full"></div>
-            </div>
-          </div>
-        </section>
-
-        {/* Mockups Gallery */}
-        <section id="mockups" className="py-24 bg-white">
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-black text-slate-900 mb-4">Professional Mockups</h2>
-              <p className="text-lg text-slate-600">High-resolution templates to visualize your brand across dozens of premium products.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {MOCKUPS.map(item => (
-                <div key={item.id} className="group relative bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 transition-all hover:shadow-2xl">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img 
-                      src={item.imageUrl} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-2 block">{item.category}</span>
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">{item.title}</h3>
-                    <button 
-                      onClick={() => setSelectedMockup(item)}
-                      className="w-full py-3 bg-white border-2 border-slate-900 text-slate-900 rounded-xl font-bold hover:bg-slate-900 hover:text-white transition-all"
-                    >
-                      View Template
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Trending Designs */}
-        <section id="trends" className="py-24 bg-slate-900 text-white overflow-hidden">
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-              <div className="max-w-xl">
-                <h2 className="text-4xl font-black mb-4">Trending Design Aesthetics</h2>
-                <p className="text-slate-400 text-lg">Stay ahead of the competition with the styles currently dominating the POD market.</p>
-              </div>
-              <button className="px-8 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-colors">
-                View All Trends
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {TRENDS.map(trend => (
-                <div key={trend.id} className="relative group rounded-3xl overflow-hidden h-96">
-                  <img src={trend.imageUrl} alt={trend.title} className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 p-8">
-                    <h3 className="text-2xl font-black mb-2">{trend.title}</h3>
-                    <p className="text-slate-300 mb-6">{trend.description}</p>
-                    <button className="flex items-center gap-2 font-bold text-indigo-400 hover:text-white transition-colors">
-                      Learn More <i className="fas fa-arrow-right text-xs"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Platforms Section */}
-        <section id="platforms" className="py-24 bg-slate-50">
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-black text-slate-900 mb-4">Connect Your Store</h2>
-              <p className="text-lg text-slate-600">Sync with the world's most popular marketplaces and start selling in minutes.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {PLATFORMS.map(platform => (
-                <PlatformCard 
-                  key={platform.name} 
-                  platform={platform} 
-                  onLearnMore={(p) => setSelectedPlatform(p)} 
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="py-24 bg-white">
-          <div className="container mx-auto px-4 md:px-8">
-            <div className="bg-indigo-600 rounded-[3rem] p-12 md:p-20 relative overflow-hidden">
-              <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
-                <div className="flex-1 text-white">
-                  <h2 className="text-4xl md:text-5xl font-black mb-8">Done-For-You Services</h2>
-                  <div className="space-y-8">
-                    {SERVICES.map((service, idx) => (
-                      <div key={idx} className="flex gap-6">
-                        <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
-                          <i className={service.icon}></i>
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold mb-1">{service.title}</h3>
-                          <p className="text-indigo-100 opacity-80">{service.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex-1 w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
-                  <h3 className="text-2xl font-black text-slate-900 mb-6 text-center">Request A Quote</h3>
-                  <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert('Message sent! We will contact you shortly.'); }}>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Full Name</label>
-                      <input type="text" placeholder="John Doe" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600" required />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Email Address</label>
-                      <input type="email" placeholder="john@example.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600" required />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Inquiry Type</label>
-                      <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                        <option>Custom Graphic Design</option>
-                        <option>Etsy Store Setup</option>
-                        <option>Product Listing Optimization</option>
-                        <option>Bulk Order Fulfillment</option>
-                      </select>
-                    </div>
-                    <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-lg hover:bg-indigo-700 transition-all shadow-lg">
-                      Send Request
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-indigo-500 opacity-20 blur-3xl rounded-full"></div>
-              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-400 opacity-20 blur-3xl rounded-full"></div>
-            </div>
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        <section id="cta" className="py-24 bg-slate-50 text-center">
-          <div className="container mx-auto px-4 md:px-8">
-            <h2 className="text-5xl font-black text-slate-900 mb-6">Ready to scale your business?</h2>
-            <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-              Join thousands of successful entrepreneurs who use POD Master Pro to fuel their creative journey.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-12 py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl hover:bg-indigo-700 shadow-2xl transition-all transform hover:-translate-y-1">
-                Start Selling Today
-              </button>
-              <button className="px-12 py-5 bg-white text-slate-900 border-2 border-slate-900 rounded-2xl font-black text-xl hover:bg-slate-50 transition-all transform hover:-translate-y-1">
-                Book Demo Call
-              </button>
-            </div>
-          </div>
-        </section>
+    <div className="min-h-screen">
+      <Navbar />
+      <main>
+        <Hero />
+        <Gallery onOpenModal={openModal} />
+        <Trends />
+        <Platforms />
+        <Services />
+        <CTA />
       </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-950 text-white py-20">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                  <i className="fas fa-layer-group text-white text-sm"></i>
-                </div>
-                <span className="text-xl font-black tracking-tight">POD<span className="text-indigo-600">MASTER</span></span>
-              </div>
-              <p className="text-slate-400 mb-8 leading-relaxed">
-                The ultimate toolkit for Print-on-Demand creators. From mockups to marketing, we help you sell more.
-              </p>
-              <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors"><i className="fab fa-facebook-f"></i></a>
-                <a href="#" className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors"><i className="fab fa-twitter"></i></a>
-                <a href="#" className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors"><i className="fab fa-instagram"></i></a>
-                <a href="#" className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-colors"><i className="fab fa-linkedin-in"></i></a>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-6">Quick Links</h4>
-              <ul className="space-y-4 text-slate-400">
-                <li><button onClick={() => scrollToSection('mockups')} className="hover:text-white transition-colors">Mockup Library</button></li>
-                <li><button onClick={() => scrollToSection('trends')} className="hover:text-white transition-colors">Design Trends</button></li>
-                <li><button onClick={() => scrollToSection('platforms')} className="hover:text-white transition-colors">Integrations</button></li>
-                <li><button onClick={() => scrollToSection('services')} className="hover:text-white transition-colors">Pro Services</button></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-6">Platforms</h4>
-              <ul className="space-y-4 text-slate-400">
-                <li><a href="https://www.etsy.com" target="_blank" className="hover:text-white transition-colors">Etsy Seller Guide</a></li>
-                <li><a href="https://merch.amazon.com" target="_blank" className="hover:text-white transition-colors">Merch by Amazon</a></li>
-                <li><a href="https://printify.com" target="_blank" className="hover:text-white transition-colors">Printify Workflow</a></li>
-                <li><a href="https://www.printful.com" target="_blank" className="hover:text-white transition-colors">Printful Dash</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-6">Newsletter</h4>
-              <p className="text-slate-400 mb-6">Get weekly trending niches and design tips delivered to your inbox.</p>
-              <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); alert('Subscribed!'); }}>
-                <input type="email" placeholder="Email" className="bg-slate-900 border border-slate-800 px-4 py-2 rounded-lg flex-grow focus:outline-none focus:border-indigo-600" required />
-                <button type="submit" className="bg-indigo-600 px-4 py-2 rounded-lg font-bold hover:bg-indigo-700">Join</button>
-              </form>
-            </div>
-          </div>
-          <div className="pt-8 border-t border-slate-900 text-center text-slate-500 text-sm">
-            <p>&copy; {new Date().getFullYear()} POD Master Pro. All rights reserved. Created for ambitious creators.</p>
-          </div>
-        </div>
-      </footer>
-
-      {/* Mockup Modal */}
-      <Modal 
-        isOpen={!!selectedMockup} 
-        onClose={() => setSelectedMockup(null)} 
-        title={selectedMockup?.title || ''}
-      >
-        <div className="space-y-6">
-          <img 
-            src={selectedMockup?.imageUrl} 
-            alt={selectedMockup?.title} 
-            className="w-full aspect-video object-cover rounded-xl shadow-lg"
-          />
-          <div>
-            <h4 className="text-lg font-bold text-slate-900 mb-2">Specifications</h4>
-            <ul className="grid grid-cols-2 gap-4 text-slate-600">
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> 4000x3000px Resolution</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Smart Object Layers</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Changeable Backgrounds</li>
-              <li className="flex items-center gap-2"><i className="fas fa-check-circle text-green-500"></i> Photo-realistic Textures</li>
-            </ul>
-          </div>
-          <p className="text-slate-600 italic border-l-4 border-indigo-500 pl-4 py-1 bg-indigo-50">
-            Professional mockup perfect for {selectedMockup?.category} stores and marketing materials.
-          </p>
-        </div>
-      </Modal>
-
-      {/* Platform Modal */}
-      <Modal 
-        isOpen={!!selectedPlatform} 
-        onClose={() => setSelectedPlatform(null)} 
-        title={selectedPlatform?.name || ''}
-      >
-        <div className="space-y-6">
-          <div className="w-20 h-20 bg-indigo-100 rounded-3xl flex items-center justify-center text-indigo-600 text-4xl mx-auto">
-            <i className={selectedPlatform?.logo}></i>
-          </div>
-          <div className="text-center">
-            <p className="text-slate-600 text-lg mb-6 leading-relaxed">
-              {selectedPlatform?.description} Integration with our automated POD fulfillment systems is seamless and takes less than 5 minutes.
-            </p>
-            <a 
-              href={selectedPlatform?.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block px-10 py-4 bg-indigo-600 text-white rounded-xl font-black text-lg hover:bg-indigo-700 shadow-xl transition-all"
-            >
-              Go to Official Site
-            </a>
-          </div>
-          <div className="grid grid-cols-3 gap-2 pt-6 border-t border-slate-100">
-            <div className="text-center">
-              <p className="text-xs font-bold text-slate-400 uppercase">Speed</p>
-              <p className="font-bold text-slate-800">5 Mins</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs font-bold text-slate-400 uppercase">Security</p>
-              <p className="font-bold text-slate-800">256-bit</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs font-bold text-slate-400 uppercase">Support</p>
-              <p className="font-bold text-slate-800">24/7 Live</p>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <Footer />
+      
+      {selectedImage && (
+        <Modal imageUrl={selectedImage} onClose={closeModal} />
+      )}
     </div>
   );
 };
 
 export default App;
+
+import React from 'react';
+
+const CTA: React.FC = () => {
+  return (
+    <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto bg-indigo-600 rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-2xl shadow-indigo-200">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent)]"></div>
+        <div className="relative z-10 space-y-8">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+            Ready to Build Your <br /> Digital Empire?
+          </h2>
+          <p className="text-indigo-100 text-xl max-w-2xl mx-auto">
+            Join thousands of creators who turned their passion into a scalable business with PrintFlow. No credit card required to start.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="bg-white text-indigo-600 px-10 py-5 rounded-2xl text-xl font-bold hover:bg-slate-50 transition-all active:scale-95 shadow-xl shadow-indigo-900/20">
+              Get Started for Free
+            </button>
+            <button className="bg-indigo-500/30 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-2xl text-xl font-bold hover:bg-indigo-500/40 transition-all active:scale-95">
+              Contact Sales
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CTA;
+
+import React from 'react';
+
+const Footer: React.FC = () => {
+  return (
+    <footer className="bg-slate-900 pt-20 pb-10 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
+          <div className="col-span-2 space-y-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                P
+              </div>
+              <span className="text-2xl font-extrabold tracking-tight">
+                Print<span className="text-indigo-400">Flow</span>
+              </span>
+            </div>
+            <p className="text-slate-400 max-w-xs leading-relaxed">
+              Empowering the next generation of e-commerce entrepreneurs with premium print-on-demand technology.
+            </p>
+            <div className="flex gap-4">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-indigo-600 transition-colors cursor-pointer">
+                  <div className="w-5 h-5 bg-white/20 rounded-full"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Product</h4>
+            <ul className="space-y-4 text-slate-400 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Catalog</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Mockup Generator</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Bulk Orders</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Integrations</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Company</h4>
+            <ul className="space-y-4 text-slate-400 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Careers</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Press Kit</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Partners</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Support</h4>
+            <ul className="space-y-4 text-slate-400 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">API Docs</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Community</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Legal</h4>
+            <ul className="space-y-4 text-slate-400 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Cookie Policy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-xs">
+          <p>© 2024 PrintFlow Inc. All rights reserved.</p>
+          <div className="flex gap-8">
+            <p>Made with ❤️ for Creators</p>
+            <p>ISO 27001 Certified</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+import React from 'react';
+import { MockupItem } from '../types';
+
+interface GalleryProps {
+  onOpenModal: (image: string) => void;
+}
+
+const mockups: MockupItem[] = [
+  { id: 1, title: 'Summer Essentials Tote', category: 'Accessories', image: 'https://images.unsplash.com/photo-1544816153-1557d97655a0?auto=format&fit=crop&q=80&w=800' },
+  { id: 2, title: 'Minimalist Crewneck', category: 'Apparel', image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800' },
+  { id: 3, title: 'Matte Finish Ceramic Mug', category: 'Homeware', image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=800' },
+  { id: 4, title: 'Cozy Knit Throw', category: 'Lifestyle', image: 'https://images.unsplash.com/photo-1542332213-31f87348057f?auto=format&fit=crop&q=80&w=800' },
+  { id: 5, title: 'Sustainable Activewear', category: 'Apparel', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800' },
+  { id: 6, title: 'Modern Wall Art', category: 'Decor', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?auto=format&fit=crop&q=80&w=800' },
+];
+
+const Gallery: React.FC<GalleryProps> = ({ onOpenModal }) => {
+  return (
+    <section id="mockups" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div className="space-y-4">
+            <h2 className="text-indigo-600 font-bold uppercase tracking-widest text-sm">Product Mockups</h2>
+            <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900">
+              Transform Ideas into <br /> Physical Reality
+            </h3>
+          </div>
+          <p className="text-slate-600 max-w-md text-lg leading-relaxed">
+            Choose from over 800+ high-quality products. Instantly generate professional photos for your storefront.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {mockups.map((item) => (
+            <div key={item.id} className="group relative bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-500">
+              <div className="aspect-[4/5] overflow-hidden">
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
+              
+              <div className="absolute inset-0 flex flex-col justify-end p-8 translate-y-8 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                <span className="text-indigo-400 text-sm font-bold uppercase tracking-wider mb-2">{item.category}</span>
+                <h4 className="text-2xl font-bold text-white mb-6">{item.title}</h4>
+                <button 
+                  onClick={() => onOpenModal(item.image)}
+                  className="w-full bg-white text-slate-900 py-4 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                >
+                  View Large Mockup
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Gallery;
+
+import React from 'react';
+
+const Hero: React.FC = () => {
+  return (
+    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 -z-10 w-1/2 h-full bg-gradient-to-l from-indigo-50 to-transparent opacity-50"></div>
+      <div className="absolute top-20 left-10 -z-10 w-64 h-64 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+              </span>
+              The Next Gen POD Partner
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 leading-[1.1]">
+              Launch Your Brand <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Without Inventory</span>
+            </h1>
+            
+            <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              Design, publish, and scale your merchandise empire globally. We handle printing, warehousing, and shipping while you focus on creativity.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <button className="bg-slate-900 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
+                Start Selling Now
+              </button>
+              <button className="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:border-indigo-600 hover:text-indigo-600 transition-all active:scale-95">
+                Watch Demo
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center lg:justify-start gap-4 pt-4">
+              <div className="flex -space-x-3">
+                {[1,2,3,4].map(i => (
+                  <img key={i} src={`https://picsum.photos/seed/${i+10}/100/100`} className="w-10 h-10 rounded-full border-2 border-white" alt="User" />
+                ))}
+              </div>
+              <p className="text-sm text-slate-500 font-medium">
+                Joined by <span className="text-slate-900 font-bold">10,000+</span> creators worldwide
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative group">
+            <div className="absolute inset-0 bg-indigo-600 rounded-3xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+            <div className="relative bg-white p-2 rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
+              <img 
+                src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800" 
+                alt="Product Mockup" 
+                className="w-full h-auto rounded-2xl transform transition-transform group-hover:scale-[1.02] duration-500"
+              />
+              <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/80 backdrop-blur-md rounded-xl border border-white/50 shadow-lg flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Top Seller</p>
+                  <p className="text-lg font-extrabold text-slate-900 leading-tight">Premium Cotton Tee</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-slate-500">Starting at</p>
+                  <p className="text-lg font-extrabold text-slate-900">$12.50</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
+
+import React from 'react';
+
+interface ModalProps {
+  imageUrl: string;
+  onClose: () => void;
+}
+
+const Modal: React.FC<ModalProps> = ({ imageUrl, onClose }) => {
+  return (
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-300"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"></div>
+      
+      <div 
+        className="relative max-w-5xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l18 18" />
+          </svg>
+        </button>
+        
+        <div className="flex flex-col lg:flex-row h-full max-h-[90vh]">
+          <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-hidden">
+            <img 
+              src={imageUrl} 
+              alt="Expanded Mockup" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+          
+          <div className="w-full lg:w-80 p-8 flex flex-col justify-between">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-extrabold text-slate-900 mb-2">Detailed View</h3>
+                <p className="text-slate-500 text-sm">Professional 4K render for your store listings.</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Material</span>
+                  <span className="font-bold">Premium Cotton</span>
+                </div>
+                <div className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Availability</span>
+                  <span className="font-bold text-green-600">In Stock</span>
+                </div>
+                <div className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
+                  <span className="text-slate-500">Global Shipping</span>
+                  <span className="font-bold">4-7 Days</span>
+                </div>
+              </div>
+            </div>
+
+            <button className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all mt-8">
+              Customize Design
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Modal;
+
+import React, { useState, useEffect } from 'react';
+
+const Navbar: React.FC = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Mockups', href: '#mockups' },
+    { name: 'Trends', href: '#trends' },
+    { name: 'Platforms', href: '#platforms' },
+    { name: 'Services', href: '#services' },
+  ];
+
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <a href="#" className="flex items-center gap-2 group">
+              <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:bg-indigo-700 transition-colors">
+                P
+              </div>
+              <span className="text-xl font-extrabold tracking-tight text-slate-900">
+                Print<span className="text-indigo-600">Flow</span>
+              </span>
+            </a>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="hidden sm:block text-sm font-semibold text-slate-600 hover:text-indigo-600">
+              Sign In
+            </button>
+            <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all active:scale-95">
+              Get Started
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
+
+import React from 'react';
+
+const platforms = [
+  { name: 'Shopify', desc: 'Full automation sync', color: 'hover:border-green-500' },
+  { name: 'Etsy', desc: 'Direct listing manager', color: 'hover:border-orange-500' },
+  { name: 'Amazon', desc: 'Merch by Amazon API', color: 'hover:border-amber-400' },
+  { name: 'TikTok Shop', desc: 'Viral social commerce', color: 'hover:border-slate-900' },
+  { name: 'Printify', desc: 'Extended provider network', color: 'hover:border-blue-600' },
+  { name: 'Printful', desc: 'Premium quality routing', color: 'hover:border-red-500' },
+];
+
+const Platforms: React.FC = () => {
+  return (
+    <section id="platforms" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-slate-50 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden border border-slate-100">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
+          
+          <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-6">
+              <h2 className="text-indigo-600 font-bold uppercase tracking-widest text-sm">Integrations</h2>
+              <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+                Connect To Your <br /> Favorite Channels
+              </h3>
+              <p className="text-slate-600 text-lg leading-relaxed">
+                Connect your store in minutes. We provide native integrations with the world's leading e-commerce platforms and marketplaces.
+              </p>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <button className="bg-indigo-600 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100">
+                  View App Directory
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {platforms.map((platform, idx) => (
+                <div key={idx} className={`bg-white p-6 rounded-2xl border border-slate-200 transition-all duration-300 shadow-sm ${platform.color} hover:shadow-xl hover:-translate-y-1`}>
+                  <h4 className="font-extrabold text-slate-900 text-xl mb-1">{platform.name}</h4>
+                  <p className="text-xs text-slate-500 font-medium">{platform.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Platforms;
+
+import React from 'react';
+
+const platforms = [
+  { name: 'Shopify', desc: 'Full automation sync', color: 'hover:border-green-500' },
+  { name: 'Etsy', desc: 'Direct listing manager', color: 'hover:border-orange-500' },
+  { name: 'Amazon', desc: 'Merch by Amazon API', color: 'hover:border-amber-400' },
+  { name: 'TikTok Shop', desc: 'Viral social commerce', color: 'hover:border-slate-900' },
+  { name: 'Printify', desc: 'Extended provider network', color: 'hover:border-blue-600' },
+  { name: 'Printful', desc: 'Premium quality routing', color: 'hover:border-red-500' },
+];
+
+const Platforms: React.FC = () => {
+  return (
+    <section id="platforms" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-slate-50 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden border border-slate-100">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
+          
+          <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-6">
+              <h2 className="text-indigo-600 font-bold uppercase tracking-widest text-sm">Integrations</h2>
+              <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+                Connect To Your <br /> Favorite Channels
+              </h3>
+              <p className="text-slate-600 text-lg leading-relaxed">
+                Connect your store in minutes. We provide native integrations with the world's leading e-commerce platforms and marketplaces.
+              </p>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <button className="bg-indigo-600 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100">
+                  View App Directory
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {platforms.map((platform, idx) => (
+                <div key={idx} className={`bg-white p-6 rounded-2xl border border-slate-200 transition-all duration-300 shadow-sm ${platform.color} hover:shadow-xl hover:-translate-y-1`}>
+                  <h4 className="font-extrabold text-slate-900 text-xl mb-1">{platform.name}</h4>
+                  <p className="text-xs text-slate-500 font-medium">{platform.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Platforms;
+
+import React from 'react';
+
+const trends = [
+  { name: 'Y2K Retro', count: '1.2M searches', color: 'bg-pink-100 text-pink-700' },
+  { name: 'Eco-Minimalism', count: '800K searches', color: 'bg-emerald-100 text-emerald-700' },
+  { name: 'Abstract Cyber', count: '500K searches', color: 'bg-blue-100 text-blue-700' },
+  { name: 'Hand-drawn Floral', count: '950K searches', color: 'bg-amber-100 text-amber-700' },
+];
+
+const Trends: React.FC = () => {
+  return (
+    <section id="trends" className="py-24 bg-slate-900 text-white overflow-hidden relative">
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full blur-[100px] opacity-20"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center space-y-4 mb-16">
+          <h2 className="text-indigo-400 font-bold uppercase tracking-widest text-sm">Market Insights</h2>
+          <h3 className="text-4xl md:text-5xl font-extrabold">Trending POD Styles</h3>
+          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+            Stay ahead of the curve with our real-time trend tracking engine. We analyze sales data to show you what's hot.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {trends.map((trend, idx) => (
+            <div key={idx} className="bg-slate-800/50 backdrop-blur-sm p-8 rounded-3xl border border-slate-700 hover:border-indigo-500 transition-all group cursor-default">
+              <div className={`inline-block px-4 py-1 rounded-full text-sm font-bold mb-4 ${trend.color}`}>
+                Trending Now
+              </div>
+              <h4 className="text-2xl font-bold mb-2 group-hover:text-indigo-400 transition-colors">{trend.name}</h4>
+              <p className="text-slate-400 mb-6">Growth in interest over last 30 days</p>
+              <div className="flex items-center gap-2 text-sm font-bold text-slate-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                {trend.count}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Trends;
