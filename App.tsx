@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MOCKUPS, PLATFORMS, TRENDS, SERVICES } from './constants';
 import { MockupItem, Platform, Trend } from './types';
